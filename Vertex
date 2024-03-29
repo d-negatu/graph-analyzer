@@ -1,1 +1,15 @@
+public class Vertex<E> {
+    private E id;
+    private VertexState state;
 
+    public Vertex(E id) {
+        this.id = id;
+        this.state = VertexState.UNVISITED;
+    }
+
+    // getters and setters
+}
+
+enum VertexState {
+    VISITED, UNVISITED, PROCESSING;
+}
