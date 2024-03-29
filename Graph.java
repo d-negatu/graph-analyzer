@@ -27,16 +27,18 @@ public class Graph<E> {
         }
     }
 
-    // Method to add an edge
-    public void addEdge(Vertex<E> from, Vertex<E> to) {
-        // Update adjacency list
-        adjListMap.get(from).add(to);
-        
-        // Update adjacency matrix
-        int fromIndex = vertexIndexMap.get(from);
-        int toIndex = vertexIndexMap.get(to);
-        adjMatrix[fromIndex][toIndex] = true;
+    public void addEdge(Vertex<E> from, Vertex<E> to, boolean isDirected) {
+    adjListMap.get(from).add(to);
+    int fromIndex = vertexIndexMap.get(from);
+    int toIndex = vertexIndexMap.get(to);
+    adjMatrix[fromIndex][toIndex] = true;
+
+    if (!isDirected) {
+        // For undirected graphs, also add the reverse edge
+        adjListMap.get(to).add(from);
+        adjMatrix[toIndex][fromIndex] = true;
     }
+}
 
     // Additional methods can be implemented to support specific graph operations
 }
