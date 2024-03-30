@@ -1,5 +1,5 @@
-public enum VertexState{
-    VISITED, 
-    UNVISTED,
-    PROCESSING
-}
+//public class VertexState{
+    //VISITED, 
+    //UNVISTED,
+   // PROCESSING;
+//}
