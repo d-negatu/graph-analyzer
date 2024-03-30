@@ -1,3 +1,4 @@
+import java.util.Objects;
 public class Vertex<E> {
     private E id;
     private VertexState state;
@@ -25,6 +26,24 @@ public class Vertex<E> {
     // Setter for state
     public void setState(VertexState state) {
         this.state = state;
+    }
+    
+    @Override
+    public String toString() {
+        return (id.toString() + "\n");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Vertex<?> vertex = (Vertex<?>) obj;
+        return Objects.equals(id, vertex.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
 
