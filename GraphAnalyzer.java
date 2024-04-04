@@ -28,11 +28,23 @@ public class GraphAnalyzer{
             System.err.println("File not found: " + fileName);
             return;
         }
+        System.out.println(findSource("6").toString());
 
-        graph.printGraphDetails();
+        //graph.printGraphDetails();
     }
-}
-  public static void go(){
+
+   public Vertex<String> findSource(String input){
+
+       return (graph.vertexExists(input));
+   }
+
+   public Vertex<String> findDestination(String input){
+
+       return (graph.vertexExists(input));
+
+   } 
+
+   public static void go(){
 
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
@@ -58,7 +70,8 @@ public class GraphAnalyzer{
                 System.out.println("Please enter a valid integer choice.");
                 scanner.nextLine(); // Consume the invalid input
                 continue; // Skip the rest of the loop iteration and prompt again
-            }
+            }// Method to check if a vertex exists
+    
 
             switch (choice) {
                 case 1:

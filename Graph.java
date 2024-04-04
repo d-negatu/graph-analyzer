@@ -33,17 +33,22 @@ public class Graph<E> {
     }
 
     public void addEdge(Vertex<E> from, Vertex<E> to, boolean isDirected) {
-    adjListMap.get(from).add(to);
-    int fromIndex = vertexIndexMap.get(from);
-    int toIndex = vertexIndexMap.get(to);
-    adjMatrix[fromIndex][toIndex] = true;
+        adjListMap.get(from).add(to);
+        int fromIndex = vertexIndexMap.get(from);
+        int toIndex = vertexIndexMap.get(to);
+        adjMatrix[fromIndex][toIndex] = true;
 
-    if (!isDirected) {
-        // For undirected graphs, also add the reverse edge
-        adjListMap.get(to).add(from);
-        adjMatrix[toIndex][fromIndex] = true;
+        if (!isDirected) {
+            // For undirected graphs, also add the reverse edge
+            adjListMap.get(to).add(from);
+            adjMatrix[toIndex][fromIndex] = true;
+        }
+
     }
 
+    // Method to check if a vertex exists
+    public Vertex<E> vertexExists(E id) {
+        return vertices.get(id);
     }
 
 
