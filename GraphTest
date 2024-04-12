@@ -1,0 +1,29 @@
+public class GraphTest {
+    public static void main(String[] args) {
+        Graph<String> graph = new Graph<>(5);
+        graph.addVertex("A");
+        graph.addVertex("B");
+        graph.addVertex("C");
+        graph.addVertex("D");
+        graph.addVertex("E");
+
+        graph.addEdge(graph.vertexExists("A"), graph.vertexExists("B"), true);
+        graph.addEdge(graph.vertexExists("B"), graph.vertexExists("C"), true);
+        graph.addEdge(graph.vertexExists("C"), graph.vertexExists("D"), true);
+        graph.addEdge(graph.vertexExists("A"), graph.vertexExists("D"), true);
+        graph.addEdge(graph.vertexExists("E"), graph.vertexExists("A"), true);
+
+        GraphProcessor<String> processor = new GraphProcessor<>(graph);
+
+        List<Vertex<String>> path = processor.findPathDFS("A", "D");
+        if (!path.isEmpty()) {
+            System.out.println("Path found:");
+            path.forEach(vertex -> System.out.print(vertex.getId() + " -> "));
+            System.out.println("end");
+        } else {
+            System.out.println("No path found.");
+        }
+
+        graph.printGraphDetails();
+    }
+}
