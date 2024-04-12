@@ -44,6 +44,68 @@ public class GraphAnalyzer{
 
    } 
 
+  import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
+public List<Vertex<String>> findPathDFS(Vertex<String> startVertex, Vertex<String> destinationVertex) {
+    // Initialize all vertices as UNVISITED and predecessor map
+    Map<Vertex<String>, Vertex<String>> predecessors = new HashMap<>();
+    for (Vertex<String> vertex : graph.getVertices()) {
+        vertex.setState(VertexState.UNVISITED);
+        predecessors.put(vertex, null); // Initially, all predecessors are null
+    }
+
+    Stack<Vertex<String>> stack = new Stack<>();
+    stack.push(startVertex);
+
+    while (!stack.isEmpty()) {
+        Vertex<String> current = stack.pop();
+
+        if (current.equals(destinationVertex)) {
+            // Destination found, construct the path from start to destination
+            return constructPath(predecessors, startVertex, destinationVertex);
+        }
+
+        if (current.getState() == VertexState.UNVISITED) {
+            // Mark the vertex as visited
+            current.setState(VertexState.VISITED);
+
+            // Push all unvisited neighbors to the stack and update their predecessors
+            for (Vertex<String> neighbor : graph.getAdjacencyList(current)) {
+                if (neighbor.getState() == VertexState.UNVISITED) {
+                    stack.push(neighbor);
+                    predecessors.put(neighbor, current);
+                }
+            }
+        }
+    }
+    // If the destination is not found, return an empty path
+    return List.of();
+}
+
+private List<Vertex<String>> constructPath(Map<Vertex<String>, Vertex<String>> predecessors, Vertex<String> start, Vertex<String> destination) {
+    Stack<Vertex<String>> pathStack = new Stack<>();
+    Vertex<String> current = destination;
+
+    while (current != null && !current.equals(start)) {
+        pathStack.push(current);
+        current = predecessors.get(current);
+    }
+    if (current == null) {
+        return List.of(); // No path found
+    }
+    pathStack.push(start); // Add the start vertex to the path
+
+    List<Vertex<String>> path = new ArrayList<>();
+    while (!pathStack.isEmpty()) {
+        path.add(pathStack.pop());
+    }
+    return path;
+}
+
+
    public static void go(){
 
         Scanner scanner = new Scanner(System.in);
