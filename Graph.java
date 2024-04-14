@@ -9,6 +9,7 @@ public class Graph<E> {
     private Map<E, Vertex<E>> vertices; // Maps ids to vertices
     // For adjacency matrix representation
     private boolean[][] adjMatrix;
+    private List<Vertex<E>> indexVertexMap; // Inverse mapping
     private int vertexCount = 0; // To keep track of the number of vertices
     private Map<Vertex<E>, Integer> vertexIndexMap; // Maps each vertex to its index in the matrix
 
@@ -17,6 +18,7 @@ public class Graph<E> {
         adjListMap = new HashMap<>();
         adjMatrix = new boolean[maxVertices][maxVertices]; // Assuming a maximum number of vertices
         vertexIndexMap = new HashMap<>();
+        indexVertexMap = new ArrayList<>(maxVertices); // Initialize with the maximum capacity
         vertices = new HashMap<>();
     }
 
@@ -28,6 +30,7 @@ public class Graph<E> {
             vertices.put(id, vertex);
             adjListMap.put(vertex, new ArrayList<>());
             vertexIndexMap.put(vertex, vertexCount++);
+            indexVertexMap.add(vertex);
         }
 
     }
@@ -41,17 +44,40 @@ public class Graph<E> {
         if (!isDirected) {
             // For undirected graphs, also add the reverse edge
             adjListMap.get(to).add(from);
-            adjMatrix[toIndex][fromIndex] = true;
+            adjMatrix[fromIndex][toIndex] = true;
         }
-
     }
 
     // Method to check if a vertex exists
     public Vertex<E> vertexExists(E id) {
         return vertices.get(id);
     }
+    
+    // Get all vertices in the graph
+    public List<Vertex<E>> getVertices() {
+        return new ArrayList<>(vertices.values());
+    }
 
+    // Get adjacency list of a particular vertex
+    public List<Vertex<E>> getAdjacencyList(Vertex<E> vertex) {
+        return adjListMap.getOrDefault(vertex, new ArrayList<>());
+    }
 
+    // Getter method for the adjacency matrix
+    public boolean[][] getAdjacencyMatrix() {
+        return adjMatrix;
+    }
+
+    public int getVertexCount(){
+
+        return (vertexCount);
+    }
+
+    // Use this method to get a vertex by its index
+    public Vertex<E> getVertexByIndex(int index) {
+        return indexVertexMap.get(index);
+    }
+ 
     public void printGraphDetails() {
         System.out.println("Graph Details:");
         System.out.println("Vertices:");
