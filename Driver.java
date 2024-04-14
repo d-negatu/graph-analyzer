@@ -19,10 +19,6 @@ public class Driver{
 
 
         analyzer.go();
-        //graph.printGraphDetails();
-
-
-        analyzer.graphDet();
 
     }         
 }

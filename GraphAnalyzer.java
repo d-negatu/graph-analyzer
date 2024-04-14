@@ -143,23 +143,16 @@ public class GraphAnalyzer{
    private List<Vertex<String>> constructPath(Map<Vertex<String>, Vertex<String>> predecessors, Vertex<String> start, Vertex<String> destination) {
     LinkedList<Vertex<String>> path = new LinkedList<>();
     Set<Vertex<String>> visited = new HashSet<>(); // to track visited vertices
-    System.out.println("In constructPath");
 
     for (Vertex<String> at = destination; at != null; at = predecessors.get(at)) {
         if (visited.contains(at)) {
             // Cycle detected, break to prevent infinite loop
-            System.out.println("Cycle detected at vertex: " + at.getId() + ", breaking...");
             break;
         }
         visited.add(at); // Mark this vertex as visited
         path.addFirst(at);
 
-        // Debug: Print current path step and the predecessor of the current vertex
-        System.out.println("Current path: " + pathToString(path));
-        System.out.println("Current vertex: " + at.getId() + ", Predecessor: " + (predecessors.get(at) != null ? predecessors.get(at).getId() : "None"));
-
         if (at.equals(start)) {
-            System.out.println("Reached the start vertex: " + start.getId() + ", complete the path.");
             break; // Reached the start, complete the path
         }
     }
@@ -168,7 +161,6 @@ public class GraphAnalyzer{
         return path;
     }
 
-    System.out.println("No path found or cycle detected.");
     return List.of(); // No path found or cycle was detected
    }
 
@@ -177,13 +169,6 @@ private String pathToString(List<Vertex<String>> path) {
                .map(vertex -> vertex.getId())
                .collect(Collectors.joining(" -> "));
 }
-
-
- 
-   
-   public void graphDet(){
-       graph.printGraphDetails();
-   }
 
 
 
@@ -218,33 +203,17 @@ private String pathToString(List<Vertex<String>> path) {
         boolean[][] matrix = graph.getAdjacencyMatrix();
         boolean[][] newEdges = new boolean[matrix.length][matrix.length];
 
-        // Print the original adjacency matrix
-        System.out.println("Original Adjacency Matrix:");
-        printMatrix(matrix);
-
-        // Print the transitive closure matrix
-        System.out.println("Transitive Closure Matrix:");
-        printMatrix(T);
-
-        //System.out.println("[TC: New Edges]");
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix.length; j++) {
                //  Check if an edge in T is not in the original graph and is not a self-loop
                 if (T[i][j] && !matrix[i][j] && i != j) {
                    newEdges[i][j] = true; // Mark the new edge in the matrix
-                    //System.out.println(i + " -> " + j);
                 }else{
                     newEdges[i][j] = false;
                 }
             }
        }
 
-        // Optionally, print the matrix for new edges if needed
-        System.out.println("New Edges Matrix:");
-        printMatrix(newEdges);
-
-        printEdges("Original Adjacency Matrix", matrix);
-        printEdges("Transitive Closure Matrix", T);
         printEdges("New Edges Matrix", newEdges);
     }
 
@@ -262,17 +231,6 @@ private String pathToString(List<Vertex<String>> path) {
         }
         System.out.println(); // Print a blank line for better separation between sections
    }
-
-   private void printMatrix(boolean[][] matrix) {
-        // Print column headers
-
-        for (int i = 0; i < graph.getVertexCount(); i++) {
-            for (int j = 0; j < graph.getVertexCount(); j++) {
-                System.out.print((matrix[i][j] ? 1 : 0) + " ");
-            }
-            System.out.println();
-        }
-    }
 
   public boolean cycleSearch() {
     Map<Vertex<String>, VertexState> state = new HashMap<>();
