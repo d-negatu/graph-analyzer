@@ -399,9 +399,9 @@ private String pathToString(List<Vertex<String>> path) {
                     try {
             System.out.println("Please enter the file path:");
             String filePath = scanner.next();  // Correctly read the file path
-
-            GraphAnalyzer analyzer = new GraphAnalyzer(filePath); // Initialize the analyzer with the file path
-            analyzer.go(); // Start the analysis
+            graph = new Graph<>(100);
+            loadGraph(filePath); // Initialize the analyzer with the file path
+            
         } catch (NoSuchElementException e) {
             System.out.println("No line was found");
         } catch (IllegalStateException e) {
