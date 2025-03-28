@@ -8,6 +8,8 @@ import java.util.stream.*; // Wildcard import for everything under java.util.str
 
 public class GraphAnalyzer{
     private Graph<String> graph = new Graph<>(100);
+    // Assuming you have a global List to store results:
+    private List<String> results = new ArrayList<>();
 
     public GraphAnalyzer(String fileName){
         loadGraph(fileName);
@@ -29,11 +31,10 @@ public class GraphAnalyzer{
             }
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + fileName);
+            System.exit(1);
             return;
         }
-        //System.out.println(findSource("6").toString());
-        
-        //graph.printGraphDetails();
+    
     }
 
    
@@ -114,10 +115,9 @@ public class GraphAnalyzer{
 
 
 
-  public void printBFSOrder(List<Vertex<String>> bfsOrder) {
+  public String generateBFSOrder(List<Vertex<String>> bfsOrder) {
     if (bfsOrder.isEmpty()) {
-        System.out.println("[BFS Vertices Ordering: 0] No vertices visited.");
-        return;
+        return "[BFS Vertices Ordering: 0] No vertices visited.";
     }
 
     StringBuilder sb = new StringBuilder("[BFS Vertices Ordering: ");
@@ -133,10 +133,8 @@ public class GraphAnalyzer{
         sb.append("Vertex ").append(vertex.getId());
     }
 
-    System.out.println(sb.toString());
-  }
-
-
+    return sb.toString();
+ }
 
 
 
@@ -199,7 +197,7 @@ private String pathToString(List<Vertex<String>> path) {
         return T;
   }
 
-  public void transitiveStats(boolean[][] T) {
+  public String transitiveStats(boolean[][] T) {
         boolean[][] matrix = graph.getAdjacencyMatrix();
         boolean[][] newEdges = new boolean[matrix.length][matrix.length];
 
@@ -214,23 +212,25 @@ private String pathToString(List<Vertex<String>> path) {
             }
        }
 
-        printEdges("New Edges Matrix", newEdges);
+       return (generateEdgesString("New Edges Matrix", newEdges));
     }
 
-   private void printEdges(String title, boolean[][] matrix) {
-        System.out.println(title + ":");
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j]) {
-                    
-                    Vertex<String> fromVertex = graph.getVertexByIndex(i);
-                    Vertex<String> toVertex = graph.getVertexByIndex(j);
-                    System.out.println(fromVertex.getId() + " -> " + toVertex.getId());
-                }
+  private String generateEdgesString(String title, boolean[][] matrix) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(title).append(":\n");
+    
+    for (int i = 0; i < matrix.length; i++) {
+        for (int j = 0; j < matrix[i].length; j++) {
+            if (matrix[i][j]) {
+                Vertex<String> fromVertex = graph.getVertexByIndex(i);
+                Vertex<String> toVertex = graph.getVertexByIndex(j);
+                sb.append(fromVertex.getId()).append(" -> ").append(toVertex.getId()).append("\n");
             }
         }
-        System.out.println(); // Print a blank line for better separation between sections
-   }
+    }
+    sb.append("\n"); // Append a blank line for better separation between sections
+    return sb.toString();
+  }
 
   public boolean cycleSearch() {
     Map<Vertex<String>, VertexState> state = new HashMap<>();
@@ -265,70 +265,87 @@ private String pathToString(List<Vertex<String>> path) {
     return false;
  }
 
- public void dfsStats(String source, String destination){
-
-      List<Vertex<String>> path = findPathDFS(source, destination);
-        if (!path.isEmpty()) {
-
-             System.out.print("[DFS Ordering: " + path.get(0).getId() + ", " + path.get(path.size() - 1).getId() + "] ");
+ public String dfsStats(String source, String destination) {
+    StringBuilder output = new StringBuilder();
+    List<Vertex<String>> path = findPathDFS(source, destination);
+    
+    if (!path.isEmpty()) {
+        // Construct the DFS Ordering String
+        output.append("[DFS Ordering: ")
+              .append(path.get(0).getId())
+              .append(", ")
+              .append(path.get(path.size() - 1).getId())
+              .append("] ");
         for (int i = 0; i < path.size(); i++) {
-            if (i > 0) System.out.print(", ");
-                System.out.print("Vertex " + path.get(i).getId());
+            if (i > 0) output.append(", ");
+            output.append("Vertex ").append(path.get(i).getId());
         }
-        System.out.println();
-
-
-            System.out.print("[DFS Path: " + path.get(0).getId() + ", " + path.get(path.size() - 1).getId() + "] ");
-            for (int i = 0; i < path.size(); i++) {
-                if (i > 0) System.out.print(" -> ");
-                    System.out.print("Vertex " + path.get(i).getId());
-            }
-            System.out.println();  // Move to the next line after printing the path
-        }    else {
-            System.out.println("No path found.");
+        output.append("\n"); // Move to the next line
+        
+        // Construct the DFS Path String
+        output.append("[DFS Path: ")
+              .append(path.get(0).getId())
+              .append(", ")
+              .append(path.get(path.size() - 1).getId())
+              .append("] ");
+        for (int i = 0; i < path.size(); i++) {
+            if (i > 0) output.append(" -> ");
+            output.append("Vertex ").append(path.get(i).getId());
         }
-  }
+        output.append("\n"); // Move to the next line
+    } else {
+        output.append("No path found.\n");
+    }
+    
+    return output.toString();
+ }
    public void go(){
 
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
+        String dfsResult;
+        List<Vertex<String>> bfsPath;
+        String bfsResult;
+        boolean[][] closureMatrix;
+        String closureResults;
+        String source = "";
+        String destination = "";
+
 
         while (running){
-            System.out.println("\nWelcome to GraphAnalyzer 2024 >>");
-            System.out.println("1) Depth First Search Path Discovery");
-            System.out.println("2) Depth First Search Path Discovery + Cycle Detection");
-            System.out.println("3) Cycle Detection");
-            System.out.println("4) Breadth First Search");
-            System.out.println("5) Transitive Closure");
-            System.out.println("6) All Tests");
-            System.out.println("7) Display Results");
-            System.out.println("8) Initialize New Graph");
-            System.out.println("0) Quit");
-            System.out.println("-------------------------------------------------------");
-            System.out.print("Enter menu choice >>> ");
+            System.out.println("\nWelcome to GraphAnalyzer 2025>>");
+        displayMenu();
 
-            int choice = -1; // Default or sentinel value indicating no valid choice made
-            try {
-                choice = scanner.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("Please enter a valid integer choice.");
-                scanner.nextLine(); // Consume the invalid input
-                continue; // Skip the rest of the loop iteration and prompt again
-            }// Method to check if a vertex exists
-    
+        int choice = getUserChoice(scanner);
+        if (choice == 0) {
+            System.out.println("Goodbye!");
+            running = false;
+            continue;
+        }
+
+        // Depending on the operation, some require specific vertex inputs
+        if (Arrays.asList(1, 2, 4, 6).contains(choice)) { // If the operation requires source and destination
+            System.out.print("Please enter a valid source vertex >>> ");
+            source = scanner.nextLine();
+            System.out.print("Please enter a valid destination vertex >>> ");
+            destination = scanner.nextLine(); 
+        }
 
             switch (choice) {
                 case 1:
+                    results.clear();
                     System.out.println("DFS Path Discovery selected.");
-                    // Implement DFS Path Discovery
-                    dfsStats("0", "3");
+                    dfsResult = dfsStats(source, destination);  // Assuming source and destination are known
+                    results.add(dfsResult);  // Store the result instead of printing
                     break;
                 case 2:
+                    results.clear();
                     System.out.println("DFS Path Discovery + Cycle Detection selected.");
                     // Implement DFS + Cycle Detection
                     
                     break;
                 case 3:
+                    results.clear();
                     System.out.println("Cycle Detection selected.");
                     // Implement Cycle Detection
                     if(!cycleSearch()){
@@ -336,22 +353,49 @@ private String pathToString(List<Vertex<String>> path) {
                     break;
                 case 4:
                     System.out.println("Breadth First Search selected.");
-                    List<Vertex<String>> pathD = findPathBFS("0", "3");
-                    printBFSOrder(pathD);
+                    results.clear();
+                    bfsPath = findPathBFS(source, destination); // Assuming source and destination are known
+                    bfsResult = generateBFSOrder(bfsPath);
+                    results.add(bfsResult);  // Store the result instead of printing
                     // Implement BFS
                     break;
                 case 5:
                     System.out.println("Transitive Closure selected.");
                     // Implement Transitive Closure
-                    transitiveStats(transitiveClosure(graph.getAdjacencyMatrix()));
+                    // 3. Transitive Closure
+                    results.clear();
+                    closureMatrix = transitiveClosure(graph.getAdjacencyMatrix());
+                    closureResults = generateEdgesString("Transitive Closure", closureMatrix);
+                    results.add(closureResults);
                     break;
                 case 6:
-                    System.out.println("All Tests selected.");
                     // Implement all tests
+                    
+                    System.out.println("All Tests selected.");
+    
+                    // Clear previous results if any
+                    results.clear();
+
+                    // 1. DFS Path Discovery (Assuming dfsStats returns a String or similar)
+                    dfsResult = dfsStats(source, destination);  // Modify to your parameters
+                    results.add(dfsResult);
+
+                    // 2. BFS Discovery
+                    bfsPath = findPathBFS(source, destination);  // Assuming these parameters make sense
+                    bfsResult = generateBFSOrder(bfsPath);  // Assuming this method is refactored to return String
+                    results.add(bfsResult);
+
+                    // 3. Transitive Closure
+                    closureMatrix = transitiveClosure(graph.getAdjacencyMatrix());
+                    closureResults = generateEdgesString("Transitive Closure", closureMatrix);
+                    results.add(closureResults);
+
                     break;
                 case 7:
                     System.out.println("Displaying Results...");
-                    // Display results
+                    for (String result : results) {
+                        System.out.println(result);
+                    }
                     break;
                 case 8:
                     try {
@@ -377,4 +421,31 @@ private String pathToString(List<Vertex<String>> path) {
 
         scanner.close();
     }
+
+    private void displayMenu() {
+    System.out.println("1) Depth First Search Path Discovery");
+    System.out.println("2) Depth First Search Path Discovery + Cycle Detection");
+    System.out.println("3) Cycle Detection");
+    System.out.println("4) Breadth First Search");
+    System.out.println("5) Transitive Closure");
+    System.out.println("6) All Tests");
+        System.out.println("7) Display Results");
+        System.out.println("8) Initialize New Graph");
+        System.out.println("0) Quit");
+        System.out.println("-------------------------------------------------------");
+        System.out.print("Enter menu choice >>> ");
+    }
+
+private int getUserChoice(Scanner scanner) {
+    int choice = -1; // Default or sentinel value indicating no valid choice made
+    try {
+        choice = scanner.nextInt();
+    } catch (InputMismatchException e) {
+        System.out.println("Please enter a valid integer choice.");
+    }
+    scanner.nextLine(); // Important to consume the newline
+    return choice;
+}
+
+
 }    
